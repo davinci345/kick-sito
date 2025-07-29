@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>K!CK - Ordina ora</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    #tshirt-models,
+    #felpa-models,
+    #cappello-models,
+    #berretto-models,
+    #zaino-models,
+    #taglia-select {
+      display: none;
+    }
+    .carrello {
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      background-color: #f9f9f9;
+    }
+    .carrello ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .carrello li {
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .rimuovi-btn {
+      margin-left: 10px;
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 3px 6px;
+      cursor: pointer;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+    .rimuovi-btn:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>K!CK</h1>
+    <p class="subtitle">Ordina i tuoi prodotti in modo semplice</p>
+
+    <form class="order-form">
+      <label for="name">Nome completo</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="address">Indirizzo completo</label>
+      <textarea id="address" name="address" rows="3" required></textarea>
+
+      <label for="category">Seleziona il prodotto</label>
+      <select id="category" name="category" required>
+        <option value="">-- Seleziona una categoria --</option>
+        <option value="tshirt">T-Shirt</option>
+        <option value="felpa">Felpa</option>
+        <option value="cappello">Cappello</option>
+        <option value="berretto">Berretto</option>
+        <option value="zaino">Zaino</option>
+      </select>
+
+      <div id="tshirt-models">
+        <label for="tshirt-model">Modello T-Shirt</label>
+        <select id="tshirt-model">
+          <option value="">-- Seleziona il modello --</option>
+          <option value="vol1">T-Shirt Vol.1</option>
+          <option value="vol2">T-Shirt Vol.2</option>
+          <option value="vol3">T-Shirt Vol.3</option>
+          <option value="vol4">T-Shirt Vol.4</option>
+          <option value="vol5">T-Shirt Vol.5</option>
+          <option value="vol6">T-Shirt Vol.6</option>
+          <option value="vol7">T-Shirt Vol.7</option>
+          <option value="vol8">T-Shirt Vol.8</option>
+          <option value="vol9">T-Shirt Vol.9</option>
+          <option value="vol10">T-Shirt Vol.10</option>
+        </select>
+      </div>
+
+      <div id="felpa-models">
+        <label for="felpa-model">Modello Felpa</label>
+        <select id="felpa-model">
+          <option value="">-- Seleziona il modello --</option>
+          <option value="session1">Felpa Session 1</option>
+          <option value="session2">Felpa Session 2</option>
+          <option value="session3">Felpa Session 3</option>
+          <option value="session4">Felpa Session 4</option>
+          <option value="session5">Felpa Session 5</option>
+        </select>
+      </div>
+
+      <div id="cappello-models">
+        <label for="cappello-model">Modello Cappello</label>
+        <select id="cappello-model">
+          <option value="">-- Seleziona il modello --</option>
+          <option value="bside1">Cappello B-Side 1</option>
+          <option value="bside2">Cappello B-Side 2</option>
+          <option value="bside3">Cappello B-Side 3</option>
+        </select>
+      </div>
+
+      <div id="berretto-models">
+        <label for="berretto-model">Modello Berretto</label>
+        <select id="berretto-model">
+          <option value="">-- Seleziona il modello --</option>
+          <option value="take1">Berretto Take 1</option>
+          <option value="take2">Berretto Take 2</option>
+          <option value="take3">Berretto Take 3</option>
+        </select>
+      </div>
+
+      <div id="zaino-models">
+        <label for="zaino-model">Modello Zaino</label>
+        <select id="zaino-model">
+          <option value="">-- Seleziona il modello --</option>
+          <option value="tour1">Zaino Tour Pack 1</option>
+          <option value="tour2">Zaino Tour Pack 2</option>
+        </select>
+      </div>
+
+      <div id="taglia-select">
+        <label for="taglia">Taglia</label>
+        <select id="taglia">
+          <option value="">-- Seleziona la taglia --</option>
+          <option value="s">S</option>
+          <option value="m">M</option>
+          <option value="l">L</option>
+          <option value="xl">XL</option>
+          <option value="2xl">2XL</option>
+          <option value="3xl">3XL</option>
+        </select>
+      </div>
+
+      <button type="button" onclick="aggiungiAlCarrello()">Aggiungi al carrello</button>
+
+      <div class="carrello">
+        <h3>Carrello</h3>
+        <ul id="lista-carrello"></ul>
+      </div>
+
+      <button type="submit">Invia ordine</button>
+    </form>
+  </div>
+
+  <script>
+    const categorySelect = document.getElementById("category");
+    const tshirtModelsDiv = document.getElementById("tshirt-models");
+    const felpaModelsDiv = document.getElementById("felpa-models");
+    const cappelloModelsDiv = document.getElementById("cappello-models");
+    const berrettoModelsDiv = document.getElementById("berretto-models");
+    const zainoModelsDiv = document.getElementById("zaino-models");
+    const tagliaSelectDiv = document.getElementById("taglia-select");
+
+    categorySelect.addEventListener("change", function () {
+      const selected = this.value;
+      tshirtModelsDiv.style.display = "none";
+      felpaModelsDiv.style.display = "none";
+      cappelloModelsDiv.style.display = "none";
+      berrettoModelsDiv.style.display = "none";
+      zainoModelsDiv.style.display = "none";
+      tagliaSelectDiv.style.display = "none";
+
+      if (selected === "tshirt") {
+        tshirtModelsDiv.style.display = "block";
+        tagliaSelectDiv.style.display = "block";
+      } else if (selected === "felpa") {
+        felpaModelsDiv.style.display = "block";
+        tagliaSelectDiv.style.display = "block";
+      } else if (selected === "cappello") {
+        cappelloModelsDiv.style.display = "block";
+      } else if (selected === "berretto") {
+        berrettoModelsDiv.style.display = "block";
+      } else if (selected === "zaino") {
+        zainoModelsDiv.style.display = "block";
+      }
+    });
+
+    function aggiungiAlCarrello() {
+      const categoria = categorySelect.value;
+      if (!categoria) return alert("Seleziona una categoria di prodotto.");
+
+      const modelli = {
+        tshirt: document.getElementById("tshirt-model"),
+        felpa: document.getElementById("felpa-model"),
+        cappello: document.getElementById("cappello-model"),
+        berretto: document.getElementById("berretto-model"),
+        zaino: document.getElementById("zaino-model"),
+      };
+
+      const modello = modelli[categoria]?.value || "";
+      const taglia = document.getElementById("taglia")?.value || "";
+
+      if (!modello) return alert("Seleziona un modello.");
+      if ((categoria === "tshirt" || categoria === "felpa") && !taglia) {
+        return alert("Seleziona una taglia.");
+      }
+
+      const voce = `${categoria.toUpperCase()} - ${modello}${taglia ? " - Taglia " + taglia.toUpperCase() : ""}`;
+
+      const li = document.createElement("li");
+      const span = document.createElement("span");
+      span.textContent = voce;
+      const btn = document.createElement("button");
+      btn.textContent = "Rimuovi";
+      btn.className = "rimuovi-btn";
+      btn.onclick = () => li.remove();
+
+      li.appendChild(span);
+      li.appendChild(btn);
+
+      document.getElementById("lista-carrello").appendChild(li);
+    }
+  </script>
+</body>
+</html>
