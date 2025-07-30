@@ -94,3 +94,25 @@ button {
 button:hover {
   background-color: #333;
 }
+.pad-effect {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  pointer-events: none;
+  animation: pad-on 0.4s ease-out forwards;
+  z-index: 9999;
+  box-shadow: 0 0 20px currentColor;
+}
+
+@keyframes pad-on {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+}
+
