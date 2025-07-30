@@ -266,39 +266,43 @@
     }
   </script>
   <script>
+  const audio = new Audio("Kick.wav");
+  audio.preload = "auto";
+
   const coloriPad = ["#FFD700", "#FF0000", "#007BFF", "#00FF66", "#A020F0"]; // Giallo, rosso, blu, verde, viola
 
-  document.addEventListener("click", (e) => {
-    creaPad(e.clientX, e.clientY);
-  });
-
-  document.addEventListener("touchstart", (e) => {
-    const touch = e.touches[0];
-    creaPad(touch.clientX, touch.clientY);
-  });
-
+  // Funzione per creare il pad visivo
   function creaPad(x, y) {
     const pad = document.createElement("div");
     pad.className = "pad-effect";
     pad.style.left = x + "px";
     pad.style.top = y + "px";
-    pad.style.color = coloriPad[Math.floor(Math.random() * coloriPad.length)];
-    pad.style.backgroundColor = pad.style.color;
-
+    pad.style.backgroundColor = coloriPad[Math.floor(Math.random() * coloriPad.length)];
     document.body.appendChild(pad);
-
     setTimeout(() => pad.remove(), 400);
   }
-  </script>
 
-  <!-- Aggiunta Kick sound -->
-  <script>
-  const kickSound = new Audio('Kick.wav');
-  document.addEventListener('click', () => {
-    kickSound.currentTime = 0;
-    kickSound.play().catch(() => {});
+  // Funzione per riprodurre il suono (reset e play per evitare ritardi)
+  function suonaKick() {
+    audio.pause();
+    audio.currentTime = 0;
+    audio.play();
+  }
+
+  // Evento per desktop (click)
+  document.addEventListener("click", (e) => {
+    creaPad(e.clientX, e.clientY);
+    suonaKick();
+  });
+
+  // Evento per mobile (touchstart)
+  document.addEventListener("touchstart", (e) => {
+    const touch = e.touches[0];
+    creaPad(touch.clientX, touch.clientY);
+    suonaKick();
   });
 </script>
+
 
 </body>
 </html>
