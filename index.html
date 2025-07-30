@@ -267,42 +267,62 @@
   </script>
   <script>
   const kickSound = new Audio('Kick.wav');
-  kickSound.load();
 
-  // Precarica l'audio (silenzioso) per sbloccarlo sui browser mobili
-  kickSound.play().then(() => kickSound.pause());
+  // Per evitare problemi su mobile, precarichiamo l'audio appena possibile
+  document.addEventListener('DOMContentLoaded', () => {
+    kickSound.load();
+    // Tocchiamo subito l'audio per sbloccarlo su mobile (silenziosamente)
+    kickSound.play().then(() => kickSound.pause()).catch(() => {});
+  });
 
   const coloriPad = ["#FFD700", "#FF0000", "#007BFF", "#00FF66", "#A020F0"]; // Giallo, rosso, blu, verde, viola
 
+  // Funzione per far partire il suono kick da capo
   function playKick() {
     kickSound.currentTime = 0;
     kickSound.play();
   }
 
-  document.addEventListener("click", (e) => {
-    playKick();
-    creaPad(e.clientX, e.clientY);
-  });
-
-  document.addEventListener("touchstart", (e) => {
-    const touch = e.touches[0];
-    playKick();
-    creaPad(touch.clientX, touch.clientY);
-  });
-
+  // Funzione per creare il pad visivo esatto dove tocchi/clicki
   function creaPad(x, y) {
     const pad = document.createElement("div");
     pad.className = "pad-effect";
     pad.style.left = x + "px";
     pad.style.top = y + "px";
-    pad.style.color = coloriPad[Math.floor(Math.random() * coloriPad.length)];
-    pad.style.backgroundColor = pad.style.color;
+    const colore = coloriPad[Math.floor(Math.random() * coloriPad.length)];
+    pad.style.color = colore;
+    pad.style.backgroundColor = colore;
 
     document.body.appendChild(pad);
 
     setTimeout(() => pad.remove(), 400);
   }
+
+  // Variabile per evitare doppie chiamate su touch + click
+  let touchInProgress = false;
+
+  // Evento touchstart: parte suono e pad
+  document.addEventListener("touchstart", (e) => {
+    touchInProgress = true;
+
+    const touch = e.touches[0];
+    playKick();
+    creaPad(touch.clientX, touch.clientY);
+  });
+
+  // Evento click: parte solo se NON è stato preceduto da touchstart (evitiamo doppio)
+  document.addEventListener("click", (e) => {
+    if (touchInProgress) {
+      // Se abbiamo appena fatto touch, ignoriamo il click
+      touchInProgress = false;
+      return;
+    }
+
+    playKick();
+    creaPad(e.clientX, e.clientY);
+  });
 </script>
+
 
 
 
