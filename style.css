@@ -115,4 +115,32 @@ button:hover {
     transform: translate(-50%, -50%) scale(0.8);
   }
 }
+@media (max-width: 600px) {
+  .container {
+    padding: 20px;
+    margin: 10px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    font-size: 1rem;
+    padding: 14px;
+  }
+
+  button {
+    font-size: 1rem;
+    padding: 14px;
+  }
+}
 
