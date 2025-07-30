@@ -43,6 +43,15 @@
     .rimuovi-btn:hover {
       background-color: #c0392b;
     }
+    .conferma {
+      background-color: #dff0d8;
+      color: #3c763d;
+      padding: 15px;
+      margin-top: 20px;
+      border: 1px solid #d6e9c6;
+      border-radius: 4px;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -50,18 +59,30 @@
     <h1>K!CK</h1>
     <p class="subtitle">Ordina i tuoi prodotti in modo semplice</p>
 
-    <form class="order-form">
+    <!-- MESSAGGIO DI CONFERMA -->
+    <div class="conferma" id="messaggio-conferma">
+      Grazie! Il tuo ordine è stato inviato con successo.
+    </div>
+
+    <!-- FORM -->
+    <form class="order-form" action="https://formsubmit.co/kickofficialstore@gmail.com" method="POST" onsubmit="return preparaOrdine()">
+      <!-- Campi nascosti richiesti da FormSubmit -->
+      <input type="hidden" name="_subject" value="Nuovo ordine ricevuto!">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="javascript:mostraConferma();">
+
       <label for="name">Nome completo</label>
-      <input type="text" id="name" name="name" required />
+      <input type="text" id="name" name="Nome" required />
 
       <label for="email">Email</label>
-      <input type="email" id="email" name="email" required />
+      <input type="email" id="email" name="Email" required />
 
       <label for="address">Indirizzo completo</label>
-      <textarea id="address" name="address" rows="3" required></textarea>
+      <textarea id="address" name="Indirizzo" rows="3" required></textarea>
 
       <label for="category">Seleziona il prodotto</label>
-      <select id="category" name="category" required>
+      <select id="category" name="Categoria" required>
         <option value="">-- Seleziona una categoria --</option>
         <option value="tshirt">T-Shirt</option>
         <option value="felpa">Felpa</option>
@@ -70,6 +91,7 @@
         <option value="zaino">Zaino</option>
       </select>
 
+      <!-- Modelli dinamici -->
       <div id="tshirt-models">
         <label for="tshirt-model">Modello T-Shirt</label>
         <select id="tshirt-model">
@@ -148,6 +170,7 @@
         <ul id="lista-carrello"></ul>
       </div>
 
+      <!-- Qui viene aggiunto dinamicamente il contenuto dell'ordine -->
       <button type="submit">Invia ordine</button>
     </form>
   </div>
@@ -162,7 +185,6 @@
     const tagliaSelectDiv = document.getElementById("taglia-select");
 
     categorySelect.addEventListener("change", function () {
-      const selected = this.value;
       tshirtModelsDiv.style.display = "none";
       felpaModelsDiv.style.display = "none";
       cappelloModelsDiv.style.display = "none";
@@ -170,6 +192,7 @@
       zainoModelsDiv.style.display = "none";
       tagliaSelectDiv.style.display = "none";
 
+      const selected = this.value;
       if (selected === "tshirt") {
         tshirtModelsDiv.style.display = "block";
         tagliaSelectDiv.style.display = "block";
@@ -220,6 +243,62 @@
 
       document.getElementById("lista-carrello").appendChild(li);
     }
+
+    function preparaOrdine() {
+      const lista = document.getElementById("lista-carrello");
+      const voci = Array.from(lista.querySelectorAll("li")).map(li => li.innerText.replace("Rimuovi", "").trim());
+
+      let input = document.querySelector('input[name="Ordine"]');
+      if (!input) {
+        input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "Ordine";
+        document.querySelector("form.order-form").appendChild(input);
+      }
+
+      input.value = voci.join("\n");
+      return true; // continua l'invio
+    }
+
+    function mostraConferma() {
+      document.querySelector(".order-form").style.display = "none";
+      document.getElementById("messaggio-conferma").style.display = "block";
+    }
   </script>
+  <script>
+  const coloriPad = ["#FFD700", "#FF0000", "#007BFF", "#00FF66", "#A020F0"]; // Giallo, rosso, blu, verde, viola
+
+  document.addEventListener("click", (e) => {
+    creaPad(e.clientX, e.clientY);
+  });
+
+  document.addEventListener("touchstart", (e) => {
+    const touch = e.touches[0];
+    creaPad(touch.clientX, touch.clientY);
+  });
+
+  function creaPad(x, y) {
+    const pad = document.createElement("div");
+    pad.className = "pad-effect";
+    pad.style.left = x + "px";
+    pad.style.top = y + "px";
+    pad.style.color = coloriPad[Math.floor(Math.random() * coloriPad.length)];
+    pad.style.backgroundColor = pad.style.color;
+
+    document.body.appendChild(pad);
+
+    setTimeout(() => pad.remove(), 400);
+  }
+  </script>
+
+  <!-- Aggiunta Kick sound -->
+  <script>
+  const kickSound = new Audio('Kick.wav');
+  document.addEventListener('click', () => {
+    kickSound.currentTime = 0;
+    kickSound.play().catch(() => {});
+  });
+</script>
+
 </body>
 </html>
