@@ -265,63 +265,37 @@
       document.getElementById("messaggio-conferma").style.display = "block";
     }
   </script>
-  <script>
-  const kickSound = new Audio('Kick.wav');
-
-  // Per evitare problemi su mobile, precarichiamo l'audio appena possibile
+ <script>
+  const kick = new Audio('Kick.wav');
   document.addEventListener('DOMContentLoaded', () => {
-    kickSound.load();
-    // Tocchiamo subito l'audio per sbloccarlo su mobile (silenziosamente)
-    kickSound.play().then(() => kickSound.pause()).catch(() => {});
+    kick.load();
+    document.body.addEventListener('pointerdown', () => {
+      if (kick.readyState >= 2) {
+        kick.currentTime = 0;
+        kick.play().catch(()=>{});
+      }
+    }, { once: true });
   });
 
-  const coloriPad = ["#FFD700", "#FF0000", "#007BFF", "#00FF66", "#A020F0"]; // Giallo, rosso, blu, verde, viola
-
-  // Funzione per far partire il suono kick da capo
-  function playKick() {
-    kickSound.currentTime = 0;
-    kickSound.play();
-  }
-
-  // Funzione per creare il pad visivo esatto dove tocchi/clicki
+  const colori = ["#FFD700","#FF0000","#007BFF","#00FF66","#A020F0"];
   function creaPad(x, y) {
     const pad = document.createElement("div");
     pad.className = "pad-effect";
     pad.style.left = x + "px";
     pad.style.top = y + "px";
-    const colore = coloriPad[Math.floor(Math.random() * coloriPad.length)];
-    pad.style.color = colore;
-    pad.style.backgroundColor = colore;
-
+    const col = colori[Math.floor(Math.random()*colori.length)];
+    pad.style.backgroundColor = col;
     document.body.appendChild(pad);
-
-    setTimeout(() => pad.remove(), 400);
+    setTimeout(()=>pad.remove(),400);
   }
 
-  // Variabile per evitare doppie chiamate su touch + click
-  let touchInProgress = false;
-
-  // Evento touchstart: parte suono e pad
-  document.addEventListener("touchstart", (e) => {
-    touchInProgress = true;
-
-    const touch = e.touches[0];
-    playKick();
-    creaPad(touch.clientX, touch.clientY);
-  });
-
-  // Evento click: parte solo se NON è stato preceduto da touchstart (evitiamo doppio)
-  document.addEventListener("click", (e) => {
-    if (touchInProgress) {
-      // Se abbiamo appena fatto touch, ignoriamo il click
-      touchInProgress = false;
-      return;
-    }
-
-    playKick();
+  document.addEventListener('pointerdown', e => {
     creaPad(e.clientX, e.clientY);
+    kick.currentTime = 0;
+    kick.play().catch(()=>{});
   });
 </script>
+
 
 
 
